@@ -1,27 +1,22 @@
 import "./globals.css";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter } from "next/font/google";
+import type { ReactNode } from "react";
+import ConditionalBottomNav from "@/components/ConditionalBottomNav";
+import AuthProvider from "@/components/AuthProvider";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const inter = Inter({
   subsets: ["latin"],
+  variable: "--font-inter",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
+      <body className={`${inter.variable} antialiased pb-16 md:pb-0`}>
+        <AuthProvider>
+          {children}
+          <ConditionalBottomNav />
+        </AuthProvider>
       </body>
     </html>
   );
