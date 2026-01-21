@@ -2,10 +2,12 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { motion } from "framer-motion";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { LikeButton } from "@/components/Button";
 import { CATEGORIES } from "@/constants/categories";
+import BannerSlider from "@/components/BannerSlider";
 
 const PRODUCTS = [
   {
@@ -103,22 +105,7 @@ export default function Home() {
       <Header />
 
       <main className="pt-22.5 px-4 sm:px-40">
-        {/* Banner */}
-        <div className="-mx-4 sm:-mx-40">
-          <section className="relative w-full h-75 sm:h-auto sm:aspect-16/8">
-            <Image
-              src="/images/banner-1.png"
-              alt="banner1"
-              fill
-              className="object-cover"
-            />
-            <div className="absolute bottom-3 sm:bottom-6 left-1/2 z-50 -translate-x-1/2 flex items-center justify-center rounded-full bg-black/30 px-3 py-1.5 text-[11px] sm:text-sm font-semibold text-white min-w-16 sm:min-w-27.5">
-              <span>1</span>
-              <span className="mx-1 sm:mx-2 opacity-70">/</span>
-              <span>3</span>
-            </div>
-          </section>
-        </div>
+        <BannerSlider />
 
         {/* Categories */}
         <section className="py-18 sm:py-20">
@@ -145,9 +132,12 @@ export default function Home() {
         <section className="pb-24 sm:pb-34">
           <div className="relative mb-5 sm:mb-10 flex items-center justify-between sm:justify-center">
             <h3 className="text-xl sm:text-2xl font-semibold">NEW ARRIVALS</h3>
-            <button className="font-medium hover:underline sm:absolute sm:right-0">
+            <Link
+              href="/products/new"
+              className="font-medium hover:underline sm:absolute sm:right-0"
+            >
               더보기
-            </button>
+            </Link>
           </div>
           <ul className="grid grid-cols-2 gap-6 md:grid-cols-4">
             {PRODUCTS.map(({ id, store, name, price, image }) => (
@@ -157,21 +147,16 @@ export default function Home() {
                     src={image}
                     alt={name}
                     fill
-                    className="object-cover transition-transform duration-300 hover:scale-105 cursor-pointer"
+                    className="object-cover transition-transform duration-300 hover:scale-105"
                   />
                 </div>
                 <div className="mt-3 flex flex-col gap-1">
                   <div className="flex justify-between items-center">
-                    <div className="flex items-center gap-2">
-                      <p className="cursor-pointer font-bold hover:underline text-sm sm:text-base">
-                        {store}
-                      </p>
-                      <img src="/icons/chevron-right.svg" alt="" aria-hidden />
-                    </div>
+                    <p className="font-bold">{store}</p>
                     <LikeButton />
                   </div>
-                  <p className="text-sm sm:text-base">{name}</p>
-                  <p className="text-sm sm:text-base font-bold">{price}</p>
+                  <p>{name}</p>
+                  <p className="font-bold">{price}</p>
                 </div>
               </li>
             ))}
@@ -182,9 +167,12 @@ export default function Home() {
         <section className="pb-24 sm:pb-34">
           <div className="relative mb-5 sm:mb-10 flex items-center justify-between sm:justify-center">
             <h3 className="text-xl sm:text-2xl font-semibold">TREND</h3>
-            <button className="font-medium hover:underline sm:absolute sm:right-0">
+            <Link
+              href="/products/trend"
+              className="font-medium hover:underline sm:absolute sm:right-0"
+            >
               더보기
-            </button>
+            </Link>
           </div>
           <ul className="grid grid-cols-2 gap-6 sm:grid-cols-4">
             {TREND_PRODUCTS.map(({ id, store, name, price, image }) => (
@@ -194,106 +182,84 @@ export default function Home() {
                     src={image}
                     alt={name}
                     fill
-                    className="object-cover transition-transform duration-300 hover:scale-105 cursor-pointer"
+                    className="object-cover transition-transform duration-300 hover:scale-105"
                   />
                 </div>
                 <div className="mt-3 flex flex-col gap-1">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <p className="cursor-pointer font-bold hover:underline text-sm sm:text-base">
-                        {store}
-                      </p>
-                      <img src="/icons/chevron-right.svg" alt="" aria-hidden />
-                    </div>
+                  <div className="flex justify-between items-center">
+                    <p className="font-bold">{store}</p>
                     <LikeButton />
                   </div>
-                  <p className="text-sm sm:text-base">{name}</p>
-                  <p className="text-sm sm:text-base font-bold">{price}</p>
+                  <p>{name}</p>
+                  <p className="font-bold">{price}</p>
                 </div>
               </li>
             ))}
           </ul>
         </section>
 
-        {/* Promotional Images */}
-        <div className="-mx-4 sm:-mx-40 mb-8 sm:mb-34">
-          <section className="relative w-full aspect-video sm:aspect-16/8">
-            <Image
-              src="/images/lighting-bg.png"
-              alt=""
-              fill
-              className="object-cover object-[center_45%]"
-            />
-            <div className="absolute bottom-10 left-6 sm:bottom-47 sm:left-20 flex flex-col text-white">
-              <p className="text-xs sm:text-2xl">부드러운 빛, 공간의 분위기</p>
-              <div className="mt-3 sm:mt-6 text-lg sm:text-[48px] font-bold leading-tight">
-                <p>MODO 조명 시리즈로</p>
-                <p>일상의 리듬을 바꾸는 시간</p>
-              </div>
-            </div>
-            <div className="absolute bottom-10 right-10 sm:bottom-16 sm:right-20 flex items-center gap-2 cursor-pointer text-white transition-all duration-300 hover:gap-3 hover:opacity-80">
-              <p className="font-medium text-xs sm:text-xl">조명 보러가기</p>
-              <img
-                src="/icons/arrow-right.svg"
-                alt=""
-                className="w-4 h-4 sm:w-7 sm:h-7"
-              />
-            </div>
-          </section>
-        </div>
+        {/* Promotional Banners */}
+        {[
+          {
+            image: "/images/lighting-bg.png",
+            subtitle: "부드러운 빛, 공간의 분위기",
+            title: ["MODO 조명 시리즈로", "일상의 리듬을 바꾸는 시간"],
+          },
+          {
+            image: "/images/textile-bg.png",
+            subtitle: "손끝에 닿는 촉감",
+            title: ["러그와 쿠션, 블랭킷으로", "편안함을 더하는 집"],
+          },
+          {
+            image: "/images/furniture-bg.png",
+            subtitle: "",
+            title: ["공간의 중심 속", "오래 머물고 싶은 분위기"],
+          },
+        ].map((banner, index) => (
+          <div key={index} className="-mx-4 sm:-mx-40 mb-20 sm:mb-34">
+            <section className="relative w-full aspect-4/3 sm:aspect-16/8 overflow-hidden">
+              <motion.div
+                initial={{ y: 28 }}
+                whileInView={{ y: 0 }}
+                viewport={{ once: true, amount: 0.45 }}
+                transition={{
+                  duration: 1.2,
+                  ease: [0.22, 1, 0.36, 1],
+                }}
+                className="absolute inset-0 will-change-transform"
+              >
+                <Image
+                  src={banner.image}
+                  alt=""
+                  fill
+                  className="object-cover"
+                />
+              </motion.div>
 
-        <div className="-mx-4 sm:-mx-40 mb-8 sm:mb-34">
-          <section className="relative w-full aspect-video sm:aspect-16/8">
-            <Image
-              src="/images/textile-bg.png"
-              alt=""
-              fill
-              className="object-cover"
-            />
-            <div className="absolute bottom-10 left-6 text-left sm:top-20 sm:right-20 sm:bottom-auto sm:left-auto sm:text-right text-white">
-              <p className="text-xs sm:text-2xl">손끝에 닿는 촉감</p>
-              <div className="mt-3 sm:mt-6 text-lg sm:text-[44px] font-bold leading-tight mb-10">
-                <p>러그와 쿠션, 블랭킷으로</p>
-                <p>편안함을 더하는 집</p>
-              </div>
-            </div>
-            <div className="absolute bottom-6 left-6 sm:bottom-16 sm:left-20 flex items-center gap-2 cursor-pointer text-white transition-all duration-300 hover:gap-3 hover:opacity-80">
-              <p className="font-medium text-xs sm:text-xl">패브릭 보러가기</p>
-              <img
-                src="/icons/arrow-right.svg"
-                alt=""
-                className="w-4 h-4 sm:w-7 sm:h-7"
-              />
-            </div>
-          </section>
-        </div>
-
-        <div className="-mx-4 sm:-mx-40 mb-8 sm:mb-34">
-          <section className="relative w-full aspect-video sm:aspect-16/8">
-            <Image
-              src="/images/furniture-bg.png"
-              alt=""
-              fill
-              className="object-cover"
-            />
-            <div className="absolute bottom-10 left-6 sm:bottom-47 sm:left-20 flex flex-col text-white">
-              <div className="flex flex-col text-lg sm:text-[48px] font-bold mt-6">
-                <p>공간의 중심 속</p>
-                <p>오래 머물고 싶은 분위기</p>
-              </div>
-            </div>
-            <div className="absolute bottom-10 right-10 sm:bottom-16 sm:right-20 flex items-center gap-2 cursor-pointer text-white transition-all duration-300 hover:gap-3 hover:opacity-80">
-              <p className="font-medium text-xs sm:text-xl">가구 보러가기</p>
-              <img
-                src="/icons/arrow-right.svg"
-                alt=""
-                className="w-4 h-4 sm:w-7 sm:h-7"
-              />
-            </div>
-          </section>
-        </div>
+              <motion.div
+                initial={{ opacity: 0, y: 22 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.45 }}
+                transition={{
+                  delay: 0.18,
+                  duration: 0.8,
+                  ease: [0.22, 1, 0.36, 1],
+                }}
+                className="absolute bottom-6 sm:bottom-10 left-6 sm:left-20 text-white"
+              >
+                {banner.subtitle && (
+                  <p className="text-xs sm:text-2xl">{banner.subtitle}</p>
+                )}
+                <div className="mt-3 sm:mt-6 text-lg sm:text-[48px] font-bold leading-tight">
+                  {banner.title.map((line) => (
+                    <p key={line}>{line}</p>
+                  ))}
+                </div>
+              </motion.div>
+            </section>
+          </div>
+        ))}
       </main>
-
       <Footer />
     </>
   );
