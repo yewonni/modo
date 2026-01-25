@@ -1,6 +1,6 @@
 import * as z from "zod";
 
-export const signupSchema = z
+export const joinSchema = z
   .object({
     email: z.string().email("유효한 이메일을 입력해주세요"),
     password: z
@@ -8,7 +8,7 @@ export const signupSchema = z
       .min(8, "비밀번호는 8자 이상이어야 합니다")
       .regex(
         /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$/,
-        "영문과 숫자를 포함해야 합니다"
+        "영문과 숫자를 포함해야 합니다",
       ),
     confirmPassword: z.string(),
     name: z.string().min(1, "이름을 입력해주세요"),
@@ -24,4 +24,4 @@ export const signupSchema = z
     path: ["termsAgreed"],
   });
 
-export type SignupFormValues = z.infer<typeof signupSchema>;
+export type JoinFormValues = z.infer<typeof joinSchema>;
