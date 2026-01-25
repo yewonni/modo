@@ -61,3 +61,13 @@ export async function logout(): Promise<void> {
     credentials: "include",
   });
 }
+
+export interface Product {
+  id: number;
+  name: string;
+  price: number;
+  image: string;
+  store?: string;
+  categoryId: number;
+  category?: { id: number; name: string; slug: string };
+}
