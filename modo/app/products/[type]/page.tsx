@@ -1,65 +1,22 @@
-"use client";
-
-import { useParams } from "next/navigation";
+import { getProductsByType } from "@/lib/products";
 import Image from "next/image";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
-import { LikeButton } from "@/components/Button";
+import Header from "@/components/common/Header";
+import Footer from "@/components/common/Footer";
+import { LikeButton } from "@/components/common/Button";
 
-const NEW_PRODUCTS = [
-  {
-    id: 1,
-    store: "스토어명",
-    name: "상품명",
-    price: "1,000",
-    image: "/images/product1.png",
-  },
-  {
-    id: 2,
-    store: "스토어명",
-    name: "상품명",
-    price: "1,000",
-    image: "/images/product1.png",
-  },
-  {
-    id: 3,
-    store: "스토어명",
-    name: "상품명",
-    price: "1,000",
-    image: "/images/product1.png",
-  },
-];
+interface PageProps {
+  params: { type: string };
+}
 
-const TREND_PRODUCTS = [
-  {
-    id: 101,
-    store: "스토어명",
-    name: "상품명",
-    price: "1,000",
-    image: "/images/product1.png",
-  },
-  {
-    id: 102,
-    store: "스토어명",
-    name: "상품명",
-    price: "1,000",
-    image: "/images/product1.png",
-  },
-  {
-    id: 103,
-    store: "스토어명",
-    name: "상품명",
-    price: "1,000",
-    image: "/images/product1.png",
-  },
-];
+export default async function ProductsPage({ params }: PageProps) {
+  const { type } = params;
 
-export default function ProductsPage() {
-  const { type } = useParams<{ type: string }>();
+  const limit = type === "new" ? 12 : type === "trend" ? 12 : undefined;
 
-  const isNew = type === "new";
-  const title = isNew ? "NEW ARRIVALS" : "TREND";
-  const products = isNew ? NEW_PRODUCTS : TREND_PRODUCTS;
+  const products = await getProductsByType(type, limit);
+
+  const title =
+    type === "new" ? "NEW ARRIVALS" : type === "trend" ? "TREND" : "PRODUCTS";
 
   return (
     <>
@@ -82,11 +39,17 @@ export default function ProductsPage() {
 
               <div className="mt-3 flex flex-col gap-1">
                 <div className="flex items-center justify-between">
-                  <p className="font-bold text-sm sm:text-base">{store}</p>
+                  <p className="font-bold text-sm sm:text-base">
+                    {store || "스토어명"}
+                  </p>
                   <LikeButton />
                 </div>
+
                 <p className="text-sm sm:text-base">{name}</p>
-                <p className="font-bold text-sm sm:text-base">{price}</p>
+
+                <p className="font-bold text-sm sm:text-base">
+                  {price.toLocaleString()}
+                </p>
               </div>
             </li>
           ))}
