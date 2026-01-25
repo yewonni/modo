@@ -20,24 +20,30 @@ export async function POST(request: Request) {
     });
 
     if (!user) {
-      return NextResponse.json({ message: "로그인 실패" }, { status: 401 });
+      return NextResponse.json(
+        { message: "아이디 또는 비밀번호를 확인해주세요." },
+        { status: 401 },
+      );
     }
 
     const isValid = await bcrypt.compare(password, user.password);
     if (!isValid) {
-      return NextResponse.json({ message: "로그인 실패" }, { status: 401 });
+      return NextResponse.json(
+        { message: "아이디 또는 비밀번호를 확인해주세요." },
+        { status: 401 },
+      );
     }
 
     const accessToken = jwt.sign(
       { userId: user.id },
       process.env.JWT_SECRET as string,
-      { expiresIn: "15m" }
+      { expiresIn: "15m" },
     );
 
     const refreshToken = jwt.sign(
       { userId: user.id },
       process.env.JWT_REFRESH_SECRET as string,
-      { expiresIn: "7d" }
+      { expiresIn: "7d" },
     );
 
     const cookieStore = await cookies();
