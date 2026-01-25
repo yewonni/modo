@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -15,3 +15,27 @@ model User {
   name      String
   createdAt DateTime @default(now())
 }
+
+model Category {
+  id        Int        @id @default(autoincrement())
+  name      String
+  slug      String     @unique
+  parentId  Int?
+
+  parent    Category?  @relation("CategoryChildren", fields: [parentId], references: [id])
+  children  Category[] @relation("CategoryChildren")
+
+  products  Product[]
+}
+
+model Product {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  price       Int
+  image       String
+  store       String   @default("Unknown Store")
+
+  categoryId  Int
+  category    Category @relation(fields: [categoryId], references: [id])
+}
+
