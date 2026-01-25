@@ -4,11 +4,18 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { CATEGORIES } from "@/constants/categories";
 import { useAuthStore } from "@/store/authStore";
 import { logout } from "@/lib/api";
 
 const TOP_HEIGHT = 125;
+
+/* ---------- types ---------- */
+interface Category {
+  id: number;
+  name: string;
+  slug: string;
+  children?: { id: number; name: string; slug: string }[];
+}
 
 export default function Header() {
   const router = useRouter();
@@ -17,8 +24,18 @@ export default function Header() {
   const [history, setHistory] = useState<string[]>([]);
   const [openUserMenu, setOpenUserMenu] = useState(false);
 
+  const [categories, setCategories] = useState<Category[]>([]);
+
   const accessToken = useAuthStore((state) => state.accessToken);
   const clearAccessToken = useAuthStore((state) => state.clearAccessToken);
+
+  /* ---------- fetch categories ---------- */
+  useEffect(() => {
+    fetch("/api/categories")
+      .then((res) => res.json())
+      .then((data: Category[]) => setCategories(data))
+      .catch((err) => console.error(err));
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -155,15 +172,16 @@ export default function Header() {
           </ul>
         </div>
 
+        {/* ---------- nav ---------- */}
         <nav className="bg-secondary">
           <ul className="mx-auto flex max-w-[320px] justify-between py-2 text-sm text-white md:max-w-none md:justify-center md:gap-25">
-            {CATEGORIES.map(({ key, label, href }) => (
-              <li key={key}>
+            {categories.map((cat) => (
+              <li key={cat.id}>
                 <Link
-                  href={href}
+                  href={`/category?slug=${cat.slug}`}
                   className="transition-colors hover:text-gray-400"
                 >
-                  {label}
+                  {cat.name}
                 </Link>
               </li>
             ))}

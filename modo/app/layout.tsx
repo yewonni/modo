@@ -1,8 +1,8 @@
 import "./globals.css";
 import { Inter } from "next/font/google";
 import type { ReactNode } from "react";
-import ConditionalBottomNav from "@/components/ConditionalBottomNav";
-import AuthProvider from "@/components/AuthProvider";
+import ConditionalBottomNav from "@/components/common/ConditionalBottomNav";
+import AuthProvider from "@/components/common/AuthProvider";
 
 const inter = Inter({
   subsets: ["latin"],

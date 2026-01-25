@@ -29,7 +29,7 @@ export default function BannerSlider() {
 
   return (
     <div className="-mx-4 sm:-mx-40">
-      <section className="relative w-full h-75 sm:h-auto sm:aspect-16/8">
+      <section className="relative w-full h-85 sm:h-auto sm:aspect-16/8">
         <Swiper
           modules={[Autoplay]}
           autoplay={{
@@ -65,7 +65,6 @@ export default function BannerSlider() {
           ))}
         </Swiper>
 
-        {/* Indicator */}
         <div className="absolute bottom-3 sm:bottom-6 left-1/2 z-50 -translate-x-1/2 flex items-center justify-center rounded-full bg-black/30 px-3 py-1.5 text-[11px] sm:text-sm font-semibold text-white min-w-16 sm:min-w-27.5">
           <span>{currentIndex + 1}</span>
           <span className="mx-1 sm:mx-2 opacity-70">/</span>

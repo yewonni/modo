@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import BottomNav from "@/components/BottomNav";
+import BottomNav from "@/components/common/BottomNav";
 
 export default function ConditionalBottomNav() {
   const pathname = usePathname();
