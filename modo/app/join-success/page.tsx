@@ -1,5 +1,5 @@
 import Link from "next/link";
-import Button from "@/components/common/Button";
+import Button from "@/app/components/common/Button";
 
 export default function JoinSuccess() {
   return (

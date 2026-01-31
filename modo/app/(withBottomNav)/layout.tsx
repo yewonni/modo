@@ -1,7 +1,7 @@
 "use client";
 
 import { ReactNode } from "react";
-import BottomNav from "@/components/common/BottomNav";
+import BottomNav from "@/app/components/common/BottomNav";
 
 export default function WithBottomNavLayout({
   children,
