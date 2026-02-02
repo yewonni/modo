@@ -469,13 +469,15 @@ export async function seedProducts(prisma: PrismaClient) {
     for (let i = 0; i < images.length; i++) {
       await prisma.product.upsert({
         where: {
-          name: names[i],
+          name_categoryId: {
+            name: names[i],
+            categoryId: category.id,
+          },
         },
         update: {
           price: getPriceByCategory(slug),
           image: `/images/${images[i]}`,
           store: stores[i],
-          categoryId: category.id,
         },
         create: {
           name: names[i],
