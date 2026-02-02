@@ -1,146 +1,29 @@
-"use client";
-
-import { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
-import Header from "@/app/components/common/Header";
-import Footer from "@/app/components/common/Footer";
-import Pagination from "@/app/components/common/Pagination";
-import CategoryList from "@/app/components/category/CategoryList";
-import ProductCard from "@/app/components/common/ProductCard";
-import FilterDropdown from "@/app/components/common/FilterDropdown";
-import { useCategories } from "@/app/components/category/hooks/useCategories";
-import { useActiveCategory } from "@/app/components/category/hooks/useActiveCategory";
-import { PRODUCT_SORT, ProductSortType } from "@/app/constants/filterOptions";
-import LoginModal from "@/app/components/common/LoginModal";
+import { Suspense } from "react";
+import CategoryPageClient from "@/app/components/category/CategoryPageClient";
 
 export default function CategoryPage() {
-  const searchParams = useSearchParams();
-  const slug = searchParams.get("slug");
-
-  const categories = useCategories();
-
-  const [selectedFilter, setSelectedFilter] = useState<ProductSortType>(
-    PRODUCT_SORT.PRICE_DESC,
-  );
-  const [currentPage, setCurrentPage] = useState(1);
-  const [products, setProducts] = useState<any[]>([]);
-  const [totalCount, setTotalCount] = useState(0);
-  const [loading, setLoading] = useState(false);
-
-  const itemsPerPage = 8;
-
-  const { activeParent, activeChild, setActiveParent, setActiveChild } =
-    useActiveCategory({
-      slug,
-      categories,
-      onChange: () => setCurrentPage(1),
-    });
-
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [selectedFilter, activeChild]);
-
-  useEffect(() => {
-    const fetchProducts = async () => {
-      setLoading(true);
-      try {
-        const sortParam =
-          selectedFilter === PRODUCT_SORT.PRICE_ASC
-            ? "priceAsc"
-            : selectedFilter === PRODUCT_SORT.PRICE_DESC
-              ? "priceDesc"
-              : "latest";
-
-        const params = new URLSearchParams({
-          sort: sortParam,
-          page: String(currentPage),
-          perPage: String(itemsPerPage),
-        });
-
-        if (activeChild) {
-          params.append("childId", String(activeChild.id));
-        } else if (activeParent) {
-          params.append("parentId", String(activeParent.id));
-        }
-
-        const res = await fetch(`/api/products?${params.toString()}`);
-        const data = await res.json();
-
-        setProducts(data.products || []);
-        setTotalCount(data.totalCount || 0);
-      } catch (error) {
-        console.error("상품 조회 실패:", error);
-        setProducts([]);
-        setTotalCount(0);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchProducts();
-  }, [activeParent, activeChild, selectedFilter, currentPage]);
-
   return (
-    <>
-      <Header />
-      <div className="mt-30 lg:mt-45 px-4 lg:px-40 flex gap-10 mb-10 lg:mb-80">
-        <CategoryList
-          categories={categories}
-          activeParent={activeParent}
-          activeChild={activeChild}
-          setActiveParent={setActiveParent}
-          setActiveChild={setActiveChild}
-        />
+    <Suspense
+      fallback={
+        <div className="mt-30 lg:mt-45 px-4 lg:px-40 flex gap-10 mb-10 lg:mb-80">
+          <aside className="hidden lg:block w-42.5 min-h-200 border-r border-r-border pr-10 bg-gray-100" />
 
-        <main className="flex-1">
-          <CategoryList
-            categories={categories}
-            activeParent={activeParent}
-            activeChild={activeChild}
-            setActiveParent={setActiveParent}
-            setActiveChild={setActiveChild}
-            isDesktop={false}
-          />
-          <section className="pb-24 lg:pb-10 mt-4 lg:mt-10">
-            <div className="flex justify-end mb-4">
-              <FilterDropdown
-                selected={selectedFilter}
-                setSelected={setSelectedFilter}
-              />
-            </div>
-
-            {loading ? (
-              <p className="text-center py-20 text-gray-500">로딩 중...</p>
-            ) : products.length === 0 ? (
-              <p className="text-center py-20 text-secondary">
-                상품이 없습니다.
-              </p>
-            ) : (
-              <>
-                <ul className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-                  {products.map((product) => (
-                    <ProductCard
-                      key={product.id}
-                      product={{
-                        ...product,
-                        price: Number(product.price),
-                      }}
-                    />
-                  ))}
-                </ul>
-                <Pagination
-                  totalItems={totalCount}
-                  itemsPerPage={itemsPerPage}
-                  currentPage={currentPage}
-                  setCurrentPage={setCurrentPage}
-                />
-              </>
-            )}
-          </section>
-        </main>
-      </div>
-      <Footer />
-      <LoginModal />
-    </>
+          <main className="flex-1">
+            <ul className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+              {Array(8)
+                .fill(0)
+                .map((_, i) => (
+                  <li
+                    key={i}
+                    className="aspect-square w-full bg-gray-200 rounded-lg animate-pulse"
+                  />
+                ))}
+            </ul>
+          </main>
+        </div>
+      }
+    >
+      <CategoryPageClient />
+    </Suspense>
   );
 }
