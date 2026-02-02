@@ -1,7 +1,6 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import Header from "@/app/components/common/Header";
 import Footer from "@/app/components/common/Footer";
 import ShippingInfo from "@/app/components/checkout/ShippingInfo";
 import OrderList from "@/app/components/checkout/OrderList";
@@ -10,6 +9,7 @@ import CheckoutSummary from "@/app/components/checkout/CheckoutSummary";
 import { apiRequest } from "@/app/lib/apiClient";
 import { useCheckoutStore } from "@/app/store/checkoutStore";
 import { useState } from "react";
+import { showToast } from "../components/common/UniqueToast";
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -56,10 +56,13 @@ export default function CheckoutPage() {
       });
 
       clear();
-      alert("주문이 완료되었습니다.");
+
+      showToast("주문이 완료되었습니다", "checkout-success");
+
       router.push("/my-page/orders");
     } catch (e: any) {
-      alert(e.message || "결제 실패");
+      showToast(e.message || "결제 실패", "checkout-error");
+
       setSubmitting(false);
     }
   };
@@ -67,7 +70,6 @@ export default function CheckoutPage() {
   if (items.length === 0) {
     return (
       <>
-        <Header />
         <main className="mt-40 text-center">주문 상품이 없습니다.</main>
         <Footer />
       </>
@@ -76,7 +78,6 @@ export default function CheckoutPage() {
 
   return (
     <>
-      <Header />
       <main className="mt-40 px-4 md:px-40">
         <form onSubmit={(e) => e.preventDefault()}>
           <ShippingInfo

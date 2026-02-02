@@ -11,6 +11,7 @@ import Image from "next/image";
 import Button from "@/app/components/common/Button";
 import InputField from "./InputField";
 import TermsCheckbox from "./TermsCheckbox";
+import { showToast } from "../common/UniqueToast";
 
 export default function JoinForm() {
   const [loading, setLoading] = useState(false);
@@ -57,9 +58,12 @@ export default function JoinForm() {
         phone: data.phone,
       };
       await signup(payload);
+
+      showToast("회원가입 성공", "signup-success");
+
       router.push("/join-success");
     } catch (err: any) {
-      alert(err.message || "회원가입 실패");
+      showToast(err.message || "회원가입 실패", "signup-error");
     } finally {
       setLoading(false);
     }
