@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/app/store/authStore";
 import { LoginPayload, login } from "../lib/api";
 import LoginForm from "../components/login/LoginForm";
+import { showToast } from "../components/common/UniqueToast";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -14,7 +15,6 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [saveId, setSaveId] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
 
   useEffect(() => {
     const savedEmail = localStorage.getItem("savedEmail");
@@ -26,8 +26,13 @@ export default function LoginPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
     setLoading(true);
+
+    if (!email || !password) {
+      showToast("이메일과 비밀번호를 입력해주세요", "login-error");
+      setLoading(false);
+      return;
+    }
 
     const payload: LoginPayload = { email, password };
 
@@ -35,16 +40,13 @@ export default function LoginPage() {
       const data = await login(payload);
       setAccessToken(data.accessToken);
 
-      if (saveId) {
-        localStorage.setItem("savedEmail", email);
-      } else {
-        localStorage.removeItem("savedEmail");
-      }
+      if (saveId) localStorage.setItem("savedEmail", email);
+      else localStorage.removeItem("savedEmail");
 
-      alert("로그인 성공");
+      showToast("로그인 성공", "login-success");
       router.push("/");
     } catch (err: any) {
-      setError(err.message || "로그인 실패");
+      showToast(err.message || "로그인 실패", "login-error");
     } finally {
       setLoading(false);
     }
@@ -57,7 +59,6 @@ export default function LoginPage() {
         password={password}
         saveId={saveId}
         loading={loading}
-        error={error}
         onEmailChange={setEmail}
         onPasswordChange={setPassword}
         onSaveIdChange={setSaveId}

@@ -74,7 +74,7 @@ export default function LoginForm({
       <Button
         type="submit"
         className="w-full py-3 mt-2 mb-4"
-        disabled={loading}
+        disabled={loading || !email || !password}
       >
         {loading ? "로그인 중..." : "로그인"}
       </Button>
