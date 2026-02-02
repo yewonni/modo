@@ -1,13 +1,13 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import Header from "@/app/components/common/Header";
 import Footer from "@/app/components/common/Footer";
 import CartHeader from "@/app/components/my-cart/CartHeader";
 import CartItem from "@/app/components/my-cart/CartItem";
 import CartSummary from "@/app/components/my-cart/CartSummary";
 import Button from "@/app/components/common/Button";
 import { apiRequest } from "@/app/lib/apiClient";
+import LoadingSpinner from "@/app/components/common/LoadingSpinner";
 
 interface CartItemType {
   id: number;
@@ -27,9 +27,15 @@ export default function MyCartPage() {
   const [loading, setLoading] = useState(true);
 
   const fetchCart = async () => {
-    const data = await apiRequest<CartItemType[]>("/api/cart");
-    setCartItems(Array.isArray(data) ? data : []);
-    setLoading(false);
+    setLoading(true);
+    try {
+      const data = await apiRequest<CartItemType[]>("/api/cart");
+      setCartItems(Array.isArray(data) ? data : []);
+    } catch (err) {
+      setCartItems([]);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -70,7 +76,11 @@ export default function MyCartPage() {
   };
 
   if (loading) {
-    return <p className="p-8 text-center text-gray-500">Loading...</p>;
+    return (
+      <div className="flex justify-center items-center py-40">
+        <LoadingSpinner />
+      </div>
+    );
   }
 
   const isAllChecked =
@@ -86,7 +96,6 @@ export default function MyCartPage() {
 
   return (
     <>
-      <Header />
       <main className="mt-37.5 lg:mt-45 px-4 md:px-20 lg:px-40 flex flex-col gap-6">
         <h1 className="text-xl md:text-2xl font-bold">
           장바구니 ({cartItems.length})

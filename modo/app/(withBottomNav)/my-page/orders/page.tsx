@@ -5,6 +5,7 @@ import Image from "next/image";
 import { apiRequest } from "@/app/lib/apiClient";
 import { useRouter } from "next/navigation";
 import Button from "@/app/components/common/Button";
+import LoadingSpinner from "@/app/components/common/LoadingSpinner";
 
 interface OrderItem {
   id: number;
@@ -41,7 +42,6 @@ export default function MyOrdersPage() {
         const data = await apiRequest<Order[]>("/api/orders");
         setOrders(Array.isArray(data) ? data : []);
       } catch (error) {
-        console.error("주문 내역 조회 실패:", error);
         setOrders([]);
       } finally {
         setLoading(false);
@@ -66,7 +66,9 @@ export default function MyOrdersPage() {
     return (
       <section className="flex flex-col gap-6 sm:gap-8">
         <p className="text-xl sm:text-2xl">최근 주문</p>
-        <div className="text-center py-10 text-gray-500">로딩 중...</div>
+        <div className="flex justify-center py-10">
+          <LoadingSpinner />
+        </div>
       </section>
     );
   }
@@ -102,7 +104,6 @@ export default function MyOrdersPage() {
           <div className="bg-sub-bg rounded-xl p-4 sm:p-6 flex flex-col gap-4">
             {order.items.map((item) => (
               <div key={item.id} className="flex gap-4 sm:gap-6">
-                {/* Image */}
                 <div className="relative w-24 h-24 shrink-0 bg-gray-200 rounded-md">
                   <Image
                     src={item.product.image}

@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import Header from "@/app/components/common/Header";
 import Footer from "@/app/components/common/Footer";
 import ProductDetails from "@/app/components/category/ProductDetails";
 import ProductDescription from "@/app/components/category/ProductDescription";
@@ -10,6 +9,7 @@ import ProductReviews from "@/app/components/category/ProductReviews";
 import { Product } from "@/app/components/category/types";
 import LoginModal from "@/app/components/common/LoginModal";
 import { apiRequest } from "@/app/lib/apiClient";
+import LoadingSpinner from "@/app/components/common/LoadingSpinner";
 
 export default function ProductDetailPage() {
   const { id } = useParams();
@@ -19,19 +19,22 @@ export default function ProductDetailPage() {
 
   useEffect(() => {
     if (!id) return;
-    setLoading(true);
 
-    fetch(`/api/products/${id}`)
-      .then((res) => {
+    const fetchProduct = async () => {
+      setLoading(true);
+      try {
+        const res = await fetch(`/api/products/${id}`);
         if (!res.ok) throw new Error("상품 조회 실패");
-        return res.json();
-      })
-      .then((data: Product) => setProduct(data))
-      .catch((err) => {
-        console.error(err);
+        const data: Product = await res.json();
+        setProduct(data);
+      } catch (err) {
         setProduct(null);
-      })
-      .finally(() => setLoading(false));
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProduct();
   }, [id]);
 
   useEffect(() => {
@@ -44,7 +47,6 @@ export default function ProductDetailPage() {
         );
         setHasOrdered(data.hasOrdered);
       } catch (err) {
-        console.error("주문 여부 확인 실패:", err);
         setHasOrdered(false);
       }
     };
@@ -52,13 +54,20 @@ export default function ProductDetailPage() {
     fetchHasOrdered();
   }, [id]);
 
-  if (loading) return <p className="p-8 text-center">Loading...</p>;
+  if (loading)
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <LoadingSpinner />
+      </div>
+    );
+
   if (!product)
-    return <p className="p-8 text-center">상품을 찾을 수 없습니다.</p>;
+    return (
+      <p className="p-8 text-center text-gray-500">상품을 찾을 수 없습니다.</p>
+    );
 
   return (
     <>
-      <Header />
       <main className="mt-37.5 lg:mt-45 px-4 md:px-20 lg:px-40 flex flex-col gap-16">
         <ProductDetails product={product} />
         <ProductDescription description={product.category?.name} />

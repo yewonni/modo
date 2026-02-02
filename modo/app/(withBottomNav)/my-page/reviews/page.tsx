@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { apiRequest } from "@/app/lib/apiClient";
+import { showToast } from "@/app/components/common/UniqueToast";
+import LoadingSpinner from "@/app/components/common/LoadingSpinner";
 
 interface Review {
   id: number;
@@ -19,8 +21,8 @@ export default function MyReviewsPage() {
     try {
       const data = await apiRequest<Review[]>("/api/reviews");
       setReviews(Array.isArray(data) ? data : []);
-    } catch (err) {
-      console.error("내 리뷰 조회 실패:", err);
+    } catch (err: any) {
+      showToast(err.message || "리뷰를 불러오는데 실패했습니다", "fetch-error");
       setReviews([]);
     } finally {
       setLoading(false);
@@ -29,11 +31,14 @@ export default function MyReviewsPage() {
 
   const handleDelete = async (id: number) => {
     if (!confirm("정말 삭제하시겠습니까?")) return;
+
     try {
       await apiRequest(`/api/reviews?id=${id}`, { method: "DELETE" });
       setReviews((prev) => prev.filter((r) => r.id !== id));
+
+      showToast("리뷰가 삭제되었습니다", `delete-success-${id}`);
     } catch (err: any) {
-      alert(err.message || "리뷰 삭제 실패");
+      showToast(err.message || "리뷰 삭제 실패", `delete-error-${id}`);
     }
   };
 
@@ -41,13 +46,27 @@ export default function MyReviewsPage() {
     fetchReviews();
   }, []);
 
-  if (loading)
-    return <p className="p-8 text-center text-gray-500">로딩 중...</p>;
-
-  if (reviews.length === 0)
+  if (loading) {
     return (
-      <p className="p-8 text-center text-gray-500">작성한 리뷰가 없습니다.</p>
+      <section className="flex flex-col gap-6 sm:gap-8">
+        <p className="text-xl sm:text-2xl">나의 리뷰</p>
+        <div className="flex justify-center py-10">
+          <LoadingSpinner />
+        </div>
+      </section>
     );
+  }
+
+  if (reviews.length === 0) {
+    return (
+      <section className="flex flex-col gap-6 sm:gap-8">
+        <p className="text-xl sm:text-2xl">나의 리뷰</p>
+        <div className="text-center py-10 text-gray-500">
+          작성한 리뷰가 없습니다.
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="flex flex-col gap-6 sm:gap-8">
