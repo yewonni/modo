@@ -17,12 +17,15 @@ interface Category {
   children?: { id: number; name: string; slug: string }[];
 }
 
-export default function Header() {
+interface HeaderProps {
+  categories: Category[];
+}
+
+export default function Header({ categories }: HeaderProps) {
   const router = useRouter();
   const [openSearch, setOpenSearch] = useState(false);
   const [keyword, setKeyword] = useState("");
   const [openUserMenu, setOpenUserMenu] = useState(false);
-  const [categories, setCategories] = useState<Category[]>([]);
 
   const accessToken = useAuthStore((state) => state.accessToken);
   const clearAccessToken = useAuthStore((state) => state.clearAccessToken);
@@ -31,23 +34,6 @@ export default function Header() {
   const addKeyword = useSearchHistoryStore((state) => state.addKeyword);
   const removeKeyword = useSearchHistoryStore((state) => state.removeKeyword);
   const clearHistory = useSearchHistoryStore((state) => state.clearHistory);
-
-  useEffect(() => {
-    fetch("/api/categories")
-      .then((res) => res.json())
-      .then((data) => {
-        if (Array.isArray(data)) {
-          setCategories(data);
-        } else {
-          console.warn("categories API 반환값이 배열이 아닙니다:", data);
-          setCategories([]);
-        }
-      })
-      .catch((err) => {
-        console.error("카테고리 조회 실패:", err);
-        setCategories([]);
-      });
-  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -73,7 +59,6 @@ export default function Header() {
       setOpenUserMenu(false);
       router.push("/login");
     } catch (error) {
-      console.error("Logout failed:", error);
       clearAccessToken();
       router.push("/login");
     }
