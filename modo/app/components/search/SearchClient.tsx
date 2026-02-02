@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
-import Footer from "@/app/components/common/Footer";
 import FilterDropdown from "@/app/components/common/FilterDropdown";
 import ProductCard from "@/app/components/common/ProductCard";
 import Pagination from "@/app/components/common/Pagination";
@@ -101,7 +100,6 @@ export default function SearchClient() {
           )}
         </section>
       </main>
-      <Footer />
       <LoginModal />
     </>
   );

@@ -70,8 +70,7 @@ export default function CheckoutPage() {
   if (items.length === 0) {
     return (
       <>
-        <main className="mt-40 text-center">주문 상품이 없습니다.</main>
-        <Footer />
+        <main className="mt-80 text-center">주문 상품이 없습니다.</main>
       </>
     );
   }
