@@ -1,5 +1,3 @@
-"use client";
-
 import Link from "next/link";
 import ProductCard from "./ProductCard";
 import { Product } from "@/app/types/product";
