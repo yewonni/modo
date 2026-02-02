@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
@@ -10,7 +12,7 @@ export async function POST(request: Request) {
     if (!refreshToken) {
       return NextResponse.json(
         { message: "Refresh token이 없습니다." },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -35,13 +37,13 @@ export async function POST(request: Request) {
     try {
       decoded = jwt.verify(
         refreshToken,
-        process.env.JWT_REFRESH_SECRET as string
+        process.env.JWT_REFRESH_SECRET as string,
       ) as { userId: string };
     } catch (error) {
       cookieStore.delete("refreshToken");
       return NextResponse.json(
         { message: "유효하지 않은 refresh token" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -49,13 +51,13 @@ export async function POST(request: Request) {
     const newAccessToken = jwt.sign(
       { userId: decoded.userId },
       process.env.JWT_SECRET as string,
-      { expiresIn: "15m" }
+      { expiresIn: "15m" },
     );
 
     const newRefreshToken = jwt.sign(
       { userId: decoded.userId },
       process.env.JWT_REFRESH_SECRET as string,
-      { expiresIn: "7d" }
+      { expiresIn: "7d" },
     );
 
     // Refresh Token 쿠키 갱신
@@ -72,7 +74,7 @@ export async function POST(request: Request) {
     console.error("Refresh token error:", error);
     return NextResponse.json(
       { message: "refresh token 갱신 실패" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

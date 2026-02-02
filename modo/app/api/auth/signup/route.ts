@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { NextResponse } from "next/server";
 import bcrypt from "bcrypt";
 import prisma from "@/prisma/client";
@@ -18,7 +20,7 @@ export async function POST(request: Request) {
   if (existingUser) {
     return NextResponse.json(
       { message: "이미 가입된 사용자" },
-      { status: 409 }
+      { status: 409 },
     );
   }
 
