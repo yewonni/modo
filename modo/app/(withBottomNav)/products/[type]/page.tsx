@@ -1,5 +1,4 @@
 import { getProductsByType } from "@/app/lib/products";
-import Header from "@/app/components/common/Header";
 import Footer from "@/app/components/common/Footer";
 import ProductCard from "@/app/components/common/ProductCard";
 import LoginModal from "@/app/components/common/LoginModal";
@@ -19,8 +18,6 @@ export default async function ProductsPage({ params }: PageProps) {
 
   return (
     <>
-      <Header />
-
       <main className="pt-40 px-4 sm:px-40 pb-40">
         <h2 className="text-2xl sm:text-3xl font-semibold mb-10">{title}</h2>
 

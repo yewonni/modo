@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Header from "@/app/components/common/Header";
 import Footer from "@/app/components/common/Footer";
 import Pagination from "@/app/components/common/Pagination";
 import ProductCard from "@/app/components/common/ProductCard";
@@ -40,9 +39,7 @@ export default function MyLikePage() {
           body: JSON.stringify({ ids: likedProductIds }),
         });
         setLikedProducts(products);
-      } catch (err) {
-        console.error("좋아요 상품 조회 실패", err);
-      }
+      } catch (err) {}
     }
 
     updateProducts();
@@ -55,8 +52,6 @@ export default function MyLikePage() {
 
   return (
     <>
-      <Header />
-
       <main className="mt-37.5 lg:mt-45 px-4 lg:px-40 min-h-[60vh]">
         <h3 className="flex justify-start mb-6 font-bold text-base md:text-xl">
           좋아요 ({likedProducts.length})
