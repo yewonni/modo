@@ -117,7 +117,7 @@ export default function ProductReviews({ productId, hasOrdered }: Props) {
     ));
 
   return (
-    <section className="flex flex-col gap-6 py-8">
+    <section className="flex flex-col gap-6 py-8 min-h-100">
       {hasOrdered && (
         <>
           <h3 className="text-2xl font-bold">리뷰 작성</h3>
