@@ -1,4 +1,3 @@
-import Header from "./components/common/Header";
 import Footer from "./components/common/Footer";
 import BannerSlider from "./components/common/BannerSlider";
 import ProductSection from "./components/common/ProductSection";
@@ -64,12 +63,13 @@ const CATEGORIES = [
 ];
 
 export default async function HomePage() {
-  const newProducts = await getProductsByType("new", 4);
-  const trendProducts = await getProductsByType("trend", 8);
+  const [newProducts, trendProducts] = await Promise.all([
+    getProductsByType("new", 4),
+    getProductsByType("trend", 8),
+  ]);
 
   return (
     <>
-      <Header />
       <BannerSlider />
 
       <main className="px-4 sm:px-40">
