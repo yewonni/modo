@@ -1,51 +1,101 @@
 "use client";
 
-import Header from "@/components/common/Header";
-import Footer from "@/components/common/Footer";
-import ShippingInfo from "@/components/checkout/ShippingInfo";
-import OrderList from "@/components/checkout/OrderList";
-import PaymentMethod from "@/components/checkout/PaymentMethod";
-import CheckoutSummary from "@/components/checkout/CheckoutSummary";
-
-const ORDER_ITEMS = [
-  {
-    id: 1,
-    store: "스토어명",
-    name: "상품명 상품명",
-    price: "10,000원",
-    image: "/images/product1.png",
-  },
-  {
-    id: 2,
-    store: "스토어명",
-    name: "상품명 상품명",
-    price: "20,000원",
-    image: "/images/product1.png",
-  },
-  {
-    id: 3,
-    store: "스토어명",
-    name: "상품명 상품명",
-    price: "30,000원",
-    image: "/images/product1.png",
-  },
-];
+import { useRouter } from "next/navigation";
+import Header from "@/app/components/common/Header";
+import Footer from "@/app/components/common/Footer";
+import ShippingInfo from "@/app/components/checkout/ShippingInfo";
+import OrderList from "@/app/components/checkout/OrderList";
+import PaymentMethod from "@/app/components/checkout/PaymentMethod";
+import CheckoutSummary from "@/app/components/checkout/CheckoutSummary";
+import { apiRequest } from "@/app/lib/apiClient";
+import { useCheckoutStore } from "@/app/store/checkoutStore";
+import { useState } from "react";
 
 export default function CheckoutPage() {
+  const router = useRouter();
+  const { items, clear } = useCheckoutStore();
+
+  const [shipping, setShipping] = useState({
+    receiver: "",
+    phone: "",
+    zipCode: "",
+    address1: "",
+    address2: "",
+    message: "",
+  });
+
+  const [paymentMethod, setPaymentMethod] = useState("");
+  const [agreed, setAgreed] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+
+  const totalPrice = items.reduce(
+    (sum, item) => sum + item.price * item.quantity,
+    0,
+  );
+
+  const handleCheckout = async () => {
+    if (submitting) return;
+    setSubmitting(true);
+
+    try {
+      await apiRequest("/api/checkout", {
+        method: "POST",
+        body: JSON.stringify({
+          items: items.map((item) => ({
+            quantity: item.quantity,
+            product: {
+              id: item.productId,
+              price: item.price,
+            },
+          })),
+          shipping,
+          paymentMethod,
+          totalPrice,
+          fromCart: false,
+        }),
+      });
+
+      clear();
+      alert("주문이 완료되었습니다.");
+      router.push("/my-page/orders");
+    } catch (e: any) {
+      alert(e.message || "결제 실패");
+      setSubmitting(false);
+    }
+  };
+
+  if (items.length === 0) {
+    return (
+      <>
+        <Header />
+        <main className="mt-40 text-center">주문 상품이 없습니다.</main>
+        <Footer />
+      </>
+    );
+  }
+
   return (
     <>
       <Header />
-
-      <main className="mt-37.5 lg:mt-45 px-4 md:px-20 lg:px-40">
-        <h3 className="text-base md:text-xl font-medium">주문서</h3>
-        <form className="flex flex-col">
-          <ShippingInfo />
-          <OrderList items={ORDER_ITEMS} />
-          <PaymentMethod />
-          <CheckoutSummary />
+      <main className="mt-40 px-4 md:px-40">
+        <form onSubmit={(e) => e.preventDefault()}>
+          <ShippingInfo
+            value={shipping}
+            onChange={(key, value) =>
+              setShipping((prev) => ({ ...prev, [key]: value }))
+            }
+          />
+          <OrderList items={items} />
+          <PaymentMethod value={paymentMethod} onChange={setPaymentMethod} />
+          <CheckoutSummary
+            items={items}
+            agreed={agreed}
+            onAgree={setAgreed}
+            onCheckout={handleCheckout}
+            submitting={submitting}
+          />
         </form>
       </main>
-
       <Footer />
     </>
   );
