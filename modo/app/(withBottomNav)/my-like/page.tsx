@@ -1,9 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Footer from "@/app/components/common/Footer";
 import Pagination from "@/app/components/common/Pagination";
 import ProductCard from "@/app/components/common/ProductCard";
+import LoadingSpinner from "@/app/components/common/LoadingSpinner";
 import { useLikeStore } from "@/app/store/likeStore";
 import { apiRequest } from "@/app/lib/apiClient";
 
@@ -18,8 +18,11 @@ interface Product {
 
 export default function MyLikePage() {
   const { likedProductIds, fetchLikes } = useLikeStore();
+
   const [likedProducts, setLikedProducts] = useState<Product[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [loading, setLoading] = useState(true);
+
   const itemsPerPage = 8;
 
   useEffect(() => {
@@ -28,8 +31,11 @@ export default function MyLikePage() {
 
   useEffect(() => {
     async function updateProducts() {
+      setLoading(true);
+
       if (likedProductIds.length === 0) {
         setLikedProducts([]);
+        setLoading(false);
         return;
       }
 
@@ -39,7 +45,11 @@ export default function MyLikePage() {
           body: JSON.stringify({ ids: likedProductIds }),
         });
         setLikedProducts(products);
-      } catch (err) {}
+      } catch (err) {
+        setLikedProducts([]);
+      } finally {
+        setLoading(false);
+      }
     }
 
     updateProducts();
@@ -53,14 +63,18 @@ export default function MyLikePage() {
   return (
     <>
       <main className="mt-37.5 lg:mt-45 px-4 lg:px-40 min-h-[60vh]">
-        <h3 className="flex justify-start mb-6 font-bold text-base md:text-xl">
+        <h3 className="flex justify-start mb-6 text-base md:text-xl">
           좋아요 ({likedProducts.length})
         </h3>
 
         <section className="pb-24 lg:pb-34 mt-4 lg:mt-10">
           <h4 className="sr-only">상품 목록</h4>
 
-          {likedProducts.length === 0 ? (
+          {loading ? (
+            <div className="flex justify-center items-center h-64">
+              <LoadingSpinner />
+            </div>
+          ) : likedProducts.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-64 text-secondary text-base md:text-lg">
               좋아요한 상품이 없습니다.
             </div>
@@ -82,8 +96,6 @@ export default function MyLikePage() {
           )}
         </section>
       </main>
-
-      <Footer />
     </>
   );
 }
