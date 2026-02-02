@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useAuthStore } from "@/store/authStore";
-import { login, LoginPayload } from "@/lib/api";
-import LoginForm from "@/components/login/LoginForm";
+import { useAuthStore } from "@/app/store/authStore";
+import { LoginPayload, login } from "../lib/api";
+import LoginForm from "../components/login/LoginForm";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -16,6 +16,14 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  useEffect(() => {
+    const savedEmail = localStorage.getItem("savedEmail");
+    if (savedEmail) {
+      setEmail(savedEmail);
+      setSaveId(true);
+    }
+  }, []);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
@@ -26,6 +34,13 @@ export default function LoginPage() {
     try {
       const data = await login(payload);
       setAccessToken(data.accessToken);
+
+      if (saveId) {
+        localStorage.setItem("savedEmail", email);
+      } else {
+        localStorage.removeItem("savedEmail");
+      }
+
       alert("로그인 성공");
       router.push("/");
     } catch (err: any) {
