@@ -29,7 +29,13 @@ export default function BannerSection({ banners }: BannerSectionProps) {
               transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
               className="absolute inset-0 will-change-transform"
             >
-              <Image src={banner.image} alt="" fill className="object-cover" />
+              <Image
+                priority={index === 0}
+                src={banner.image}
+                alt=""
+                fill
+                className="object-cover"
+              />
             </motion.div>
 
             <motion.div
