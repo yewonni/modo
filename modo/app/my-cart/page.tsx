@@ -1,13 +1,13 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import Footer from "@/app/components/common/Footer";
 import CartHeader from "@/app/components/my-cart/CartHeader";
 import CartItem from "@/app/components/my-cart/CartItem";
 import CartSummary from "@/app/components/my-cart/CartSummary";
 import Button from "@/app/components/common/Button";
 import { apiRequest } from "@/app/lib/apiClient";
 import LoadingSpinner from "@/app/components/common/LoadingSpinner";
+import { useAuthStore } from "../store/authStore";
 
 interface CartItemType {
   id: number;
@@ -25,13 +25,17 @@ export default function MyCartPage() {
   const [cartItems, setCartItems] = useState<CartItemType[]>([]);
   const [checkedIds, setCheckedIds] = useState<number[]>([]);
   const [loading, setLoading] = useState(true);
+  const isInitialized = useAuthStore((s) => s.isInitialized);
 
   const fetchCart = async () => {
     setLoading(true);
     try {
       const data = await apiRequest<CartItemType[]>("/api/cart");
       setCartItems(Array.isArray(data) ? data : []);
-    } catch (err) {
+    } catch (err: any) {
+      if (err.message?.includes("401")) {
+        return;
+      }
       setCartItems([]);
     } finally {
       setLoading(false);
@@ -39,8 +43,9 @@ export default function MyCartPage() {
   };
 
   useEffect(() => {
+    if (!isInitialized) return;
     fetchCart();
-  }, []);
+  }, [isInitialized]);
 
   const totalPrice = useMemo(() => {
     return cartItems.reduce(
@@ -77,7 +82,7 @@ export default function MyCartPage() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center py-40">
+      <div className="flex justify-center items-center py-60">
         <LoadingSpinner />
       </div>
     );
@@ -128,12 +133,10 @@ export default function MyCartPage() {
                 선택 상품 삭제
               </Button>
             </div>
-
             <CartSummary totalPrice={totalPrice} items={cartItems} />
           </>
         )}
       </main>
-      <Footer />
     </>
   );
 }
