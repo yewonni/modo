@@ -2,7 +2,7 @@ import "./globals.css";
 import { Inter } from "next/font/google";
 import type { ReactNode } from "react";
 import { Toaster } from "react-hot-toast";
-
+import AuthInitializer from "./components/common/AuthInitializer";
 import HeaderWrapper from "./components/common/HeaderWrapper";
 import AuthProvider from "./components/common/AuthProvider";
 import LikeFetcher from "./components/common/LikeFetcher";
@@ -23,12 +23,13 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.variable} antialiased pb-16 md:pb-0`}>
-        <HeaderWrapper categories={categories} />
-
         <AuthProvider>
+          <AuthInitializer />
+          <HeaderWrapper categories={categories} />
           <LikeFetcher />
           {children}
         </AuthProvider>
+
         <Toaster />
       </body>
     </html>
