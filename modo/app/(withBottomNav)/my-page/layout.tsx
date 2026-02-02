@@ -1,6 +1,5 @@
 "use client";
 
-import Header from "@/app/components/common/Header";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -13,8 +12,6 @@ export default function MyPageLayout({
 
   return (
     <>
-      <Header />
-
       <div className="px-4 sm:px-40 mt-30 flex flex-col sm:flex-row gap-10 sm:gap-20">
         <aside className="sm:w-56 py-6 sm:py-10 sm:sticky sm:top-30 h-fit">
           <p className="mb-6 sm:mb-10 text-lg sm:text-xl">MY PAGE</p>
