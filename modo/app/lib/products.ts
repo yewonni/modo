@@ -12,24 +12,25 @@ export interface Product {
   category?: { id: number; name: string; slug: string };
 }
 
-export async function getProductsByType(
-  type?: string,
-  limit?: number,
-): Promise<Product[]> {
+export async function getProductsByType(type?: string, limit = 8) {
   if (type === "new") {
     return prisma.product.findMany({
       orderBy: { id: "desc" },
       take: limit,
       include: { category: true },
     });
-  } else if (type === "trend") {
-    const allProducts = await prisma.product.findMany({
+  }
+
+  if (type === "trend") {
+    return prisma.product.findMany({
+      orderBy: { id: "desc" }, // 임시 트렌드 기준
+      take: limit,
       include: { category: true },
     });
-    return limit
-      ? allProducts.sort(() => 0.5 - Math.random()).slice(0, limit)
-      : allProducts;
-  } else {
-    return prisma.product.findMany({ include: { category: true } });
   }
+
+  return prisma.product.findMany({
+    take: limit,
+    include: { category: true },
+  });
 }
