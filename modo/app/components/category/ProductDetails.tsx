@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Button, { LikeButton } from "../common/Button";
@@ -11,6 +11,7 @@ import { useUIStore } from "@/app/store/uiStore";
 import { apiRequest } from "@/app/lib/apiClient";
 import { useCartStore } from "@/app/store/cartStore";
 import { useCheckoutStore } from "@/app/store/checkoutStore";
+import { showToast } from "../common/UniqueToast";
 
 interface Props {
   product: Product;
@@ -27,7 +28,7 @@ export default function ProductDetails({ product }: Props) {
 
   const isLiked = likedProductIds.includes(product.id);
 
-  const handleLike = async () => {
+  const handleLike = useCallback(async () => {
     if (!accessToken) return openLoginModal();
 
     try {
@@ -37,12 +38,12 @@ export default function ProductDetails({ product }: Props) {
         body: JSON.stringify({ productId: product.id }),
       });
     } catch (err) {
-      console.error(err);
+      showToast("좋아요 처리 실패", `like-error-${product.id}`);
       toggleLike(product.id);
     }
-  };
+  }, [accessToken, isLiked, openLoginModal, product.id, toggleLike]);
 
-  const handleAddToCart = async () => {
+  const handleAddToCart = useCallback(async () => {
     if (!accessToken) return openLoginModal();
 
     try {
@@ -60,14 +61,16 @@ export default function ProductDetails({ product }: Props) {
         quantity,
       });
 
-      alert("장바구니에 담겼습니다.");
+      showToast("장바구니에 담겼습니다", `cart-success-${product.id}`);
     } catch (err: any) {
-      console.error(err);
-      alert(err.message || "장바구니 추가 실패");
+      showToast(
+        err.message || "장바구니 추가 실패",
+        `cart-error-${product.id}`,
+      );
     }
-  };
+  }, [accessToken, addItem, openLoginModal, product, quantity]);
 
-  const handleBuyNow = () => {
+  const handleBuyNow = useCallback(() => {
     if (!accessToken) return openLoginModal();
 
     setItems([
@@ -82,7 +85,7 @@ export default function ProductDetails({ product }: Props) {
     ]);
 
     router.push("/checkout");
-  };
+  }, [accessToken, openLoginModal, product, quantity, router, setItems]);
 
   return (
     <section aria-label="상품 상세 정보" className="flex flex-col gap-10">
@@ -98,6 +101,7 @@ export default function ProductDetails({ product }: Props) {
               fill
               className="object-cover rounded-md"
               sizes="(max-width: 1024px) 100vw, 500px"
+              priority
             />
           </div>
         </div>
