@@ -152,12 +152,14 @@ export default function ProductReviews({ productId, hasOrdered }: Props) {
           <LoadingSpinner />
         </div>
       ) : reviews.length === 0 ? (
-        <p className="text-center py-4 text-gray-500">리뷰가 없습니다.</p>
+        <p className="text-center py-10 text-gray-500 mb-120">
+          리뷰가 없습니다.
+        </p>
       ) : (
         reviews.map((review) => (
           <article
             key={review.id}
-            className="border-b py-4 flex flex-col sm:flex-row sm:justify-between gap-2"
+            className="border-b py-4 flex flex-col sm:flex-row sm:justify-between gap-2 mb-120"
           >
             <div className="flex flex-col gap-1">
               <p className="font-medium">{review.user.name}</p>
