@@ -11,11 +11,7 @@ export async function GET(
   try {
     const reviews = await prisma.review.findMany({
       where: { productId: Number(params.id) },
-      include: {
-        user: {
-          select: { id: true, name: true },
-        },
-      },
+      include: { user: { select: { id: true, name: true } } },
       orderBy: { createdAt: "desc" },
     });
 
@@ -32,23 +28,17 @@ export async function POST(
 ) {
   try {
     const userId = await getUserIdFromRequest(req);
-    if (!userId) {
+    if (!userId)
       return NextResponse.json(
         { message: "로그인이 필요합니다" },
         { status: 401 },
       );
-    }
 
-    const body = await req.json();
-    const { content, rating } = body;
+    const { content, rating } = await req.json();
 
     const hasOrdered = await prisma.orderItem.findFirst({
-      where: {
-        productId: Number(params.id),
-        order: { userId },
-      },
+      where: { productId: Number(params.id), order: { userId } },
     });
-
     if (!hasOrdered) {
       return NextResponse.json(
         { message: "주문한 상품에 대해서만 리뷰 작성 가능" },
@@ -69,5 +59,36 @@ export async function POST(
   } catch (error) {
     console.error(error);
     return NextResponse.json({ message: "리뷰 작성 실패" }, { status: 500 });
+  }
+}
+
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: { id: string } },
+) {
+  try {
+    const userId = await getUserIdFromRequest(req);
+    if (!userId)
+      return NextResponse.json(
+        { message: "로그인이 필요합니다" },
+        { status: 401 },
+      );
+
+    const reviewId = new URL(req.url).searchParams.get("id");
+    if (!reviewId)
+      return NextResponse.json({ message: "reviewId 필요" }, { status: 400 });
+
+    const review = await prisma.review.findUnique({
+      where: { id: Number(reviewId) },
+    });
+    if (!review || review.userId !== userId)
+      return NextResponse.json({ message: "삭제 권한 없음" }, { status: 403 });
+
+    await prisma.review.delete({ where: { id: Number(reviewId) } });
+
+    return NextResponse.json({ message: "리뷰 삭제 완료" });
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json({ message: "리뷰 삭제 실패" }, { status: 500 });
   }
 }

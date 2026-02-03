@@ -97,9 +97,10 @@ export default function ProductReviews({ productId, hasOrdered }: Props) {
           setReviews((prev) => prev.filter((r) => r.id !== reviewId));
 
           try {
-            await apiRequest(`/api/products/${productId}/reviews/${reviewId}`, {
-              method: "DELETE",
-            });
+            await apiRequest(
+              `/api/products/${productId}/reviews?id=${reviewId}`,
+              { method: "DELETE" },
+            );
 
             showToast("리뷰가 삭제되었습니다", `review-delete-${reviewId}`);
           } catch (err: any) {
