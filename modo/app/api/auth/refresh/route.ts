@@ -10,10 +10,10 @@ export async function POST(request: Request) {
     const refreshToken = cookieStore.get("refreshToken")?.value;
 
     if (!refreshToken) {
-      return NextResponse.json(
-        { message: "Refresh token이 없습니다." },
-        { status: 401 },
-      );
+      return NextResponse.json({
+        message: "로그인되지 않음",
+        accessToken: null,
+      });
     }
 
     const authHeader = request.headers.get("authorization");
@@ -26,9 +26,12 @@ export async function POST(request: Request) {
     if (accessToken) {
       try {
         jwt.verify(accessToken, process.env.JWT_SECRET as string);
-        return NextResponse.json({ message: "Access token이 유효함" });
+        return NextResponse.json({
+          message: "Access token이 유효함",
+          accessToken,
+        });
       } catch {
-        // 만료된 경우
+        // 만료된 경우, refreshToken으로 갱신
       }
     }
 
@@ -41,10 +44,10 @@ export async function POST(request: Request) {
       ) as { userId: string };
     } catch (error) {
       cookieStore.delete("refreshToken");
-      return NextResponse.json(
-        { message: "유효하지 않은 refresh token" },
-        { status: 401 },
-      );
+      return NextResponse.json({
+        message: "유효하지 않은 refresh token",
+        accessToken: null,
+      });
     }
 
     // 새로운 토큰 발급
@@ -73,7 +76,7 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error("Refresh token error:", error);
     return NextResponse.json(
-      { message: "refresh token 갱신 실패" },
+      { message: "refresh token 갱신 실패", accessToken: null },
       { status: 500 },
     );
   }
