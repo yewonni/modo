@@ -8,7 +8,7 @@ import PaymentMethod from "@/app/components/checkout/PaymentMethod";
 import CheckoutSummary from "@/app/components/checkout/CheckoutSummary";
 import { apiRequest } from "@/app/lib/apiClient";
 import { useCheckoutStore } from "@/app/store/checkoutStore";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { showToast } from "../components/common/UniqueToast";
 
 export default function CheckoutPage() {
@@ -32,6 +32,24 @@ export default function CheckoutPage() {
     (sum, item) => sum + item.price * item.quantity,
     0,
   );
+
+  const hasWrittenData =
+    items.length > 0 ||
+    Object.values(shipping).some((v) => v.trim() !== "") ||
+    paymentMethod !== "" ||
+    agreed;
+
+  useEffect(() => {
+    if (!hasWrittenData) return;
+
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = "";
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [hasWrittenData]);
 
   const handleCheckout = async () => {
     if (submitting) return;
@@ -62,17 +80,12 @@ export default function CheckoutPage() {
       router.push("/my-page/orders");
     } catch (e: any) {
       showToast(e.message || "결제 실패", "checkout-error");
-
       setSubmitting(false);
     }
   };
 
   if (items.length === 0) {
-    return (
-      <>
-        <main className="mt-80 text-center">주문 상품이 없습니다.</main>
-      </>
-    );
+    return <main className="mt-80 text-center">주문 상품이 없습니다.</main>;
   }
 
   return (
