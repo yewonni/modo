@@ -162,14 +162,14 @@ export default function Header({ categories }: HeaderProps) {
                     >
                       <Link
                         href="/my-page/orders"
-                        className="block p-4 text-sm hover:bg-gray-100"
+                        className="block p-4 text-sm hover:bg-gray-100 text-secondary"
                         onClick={() => setOpenUserMenu(false)}
                       >
                         마이페이지
                       </Link>
                       <button
                         onClick={handleLogoutClick}
-                        className="w-full p-4 text-sm hover:bg-gray-100 text-center"
+                        className="w-full p-4 text-sm hover:bg-gray-100 text-center text-secondary"
                       >
                         로그아웃
                       </button>
@@ -215,7 +215,7 @@ export default function Header({ categories }: HeaderProps) {
                 value={keyword}
                 onChange={(e) => setKeyword(e.target.value)}
                 placeholder="검색어를 입력하세요"
-                className="w-full rounded-md bg-white px-4 py-3 text-sm outline-none"
+                className="w-full rounded-md bg-white px-4 py-3 text-sm outline-none text-secondary"
               />
             </form>
 

@@ -117,7 +117,7 @@ export default function ProductDetails({ product }: Props) {
           </p>
 
           {/* 배송정보, 배송비, 혜택 */}
-          <section className="flex flex-col gap-3 text-gray-700">
+          <section className="flex flex-col gap-3 text-secondary">
             <div className="flex gap-7">
               <p className="font-medium text-gray-500 min-w-20">배송정보</p>
               <p>1 ~ 3일 내 출고 예정</p>
@@ -128,7 +128,7 @@ export default function ProductDetails({ product }: Props) {
             </div>
             <div className="flex gap-7">
               <p className="font-medium text-gray-500 min-w-20">혜택안내</p>
-              <ul className="flex flex-col gap-1 list-disc list-inside text-gray-700">
+              <ul className="flex flex-col gap-1 list-disc list-inside text-secondary">
                 <li>신규 회원 5% 할인</li>
                 <li>리뷰 적립금 최대 3,000P</li>
                 <li className="text-point">회원 등급별 혜택</li>
@@ -141,16 +141,16 @@ export default function ProductDetails({ product }: Props) {
             <p className="font-semibold">수량</p>
             <div className="flex w-max border border-gray-300 rounded-md overflow-hidden bg-white">
               <button
-                className="px-4 py-2 hover:bg-gray-100"
+                className="px-4 py-2 hover:bg-gray-100 text-secondary"
                 onClick={() => setQuantity((prev) => Math.max(1, prev - 1))}
               >
                 -
               </button>
-              <div className="px-4 py-2 border-x border-gray-300 flex items-center justify-center w-10">
+              <div className="px-4 py-2 border-x border-gray-300 flex items-center justify-center w-10 text-secondary">
                 {quantity}
               </div>
               <button
-                className="px-4 py-2 hover:bg-gray-100"
+                className="px-4 py-2 hover:bg-gray-100 text-secondary"
                 onClick={() => setQuantity((prev) => prev + 1)}
               >
                 +

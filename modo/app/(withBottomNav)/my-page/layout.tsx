@@ -14,7 +14,9 @@ export default function MyPageLayout({
     <>
       <div className="px-4 sm:px-40 mt-30 flex flex-col sm:flex-row gap-10 sm:gap-20">
         <aside className="sm:w-56 py-6 sm:py-10 sm:sticky sm:top-30 h-fit">
-          <p className="mb-6 sm:mb-10 text-lg sm:text-xl">MY PAGE</p>
+          <p className="mb-6 sm:mb-10 text-lg sm:text-xl text-foreground">
+            MY PAGE
+          </p>
 
           <nav className="flex sm:flex-col gap-4 sm:gap-0">
             {[
@@ -30,8 +32,8 @@ export default function MyPageLayout({
                   className={`px-3 sm:pl-4 py-2 sm:py-3 border-b-2 sm:border-b-0 sm:border-l-2 transition
                     ${
                       active
-                        ? "border-black text-black"
-                        : "border-transparent text-gray-400 hover:text-black"
+                        ? "border-black dark:border-white text-black dark:text-white"
+                        : "border-transparent text-gray-400 dark:text-gray-500 hover:text-black dark:hover:text-white"
                     }
                   `}
                 >
