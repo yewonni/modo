@@ -28,6 +28,7 @@ https://modo-phi.vercel.app/
 - Access Token 메모리 저장
 - Refresh Token HttpOnly 쿠키 저장
 - 토큰 만료 시 자동 갱신 처리
+- 미들웨어 적용
 
 <img width="1728" height="988" alt="Image" src="https://github.com/user-attachments/assets/16f50648-efbc-4999-8c4e-f41f10af2f94" />
 
