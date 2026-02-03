@@ -20,7 +20,10 @@ export default function InputField({
 }: InputFieldProps) {
   return (
     <div className="w-full flex flex-col gap-1">
-      <label htmlFor={id} className="text-sm font-medium text-gray-700">
+      <label
+        htmlFor={id}
+        className="text-sm font-medium text-gray-700 dark:text-gray-300"
+      >
         {label}
       </label>
       <input
@@ -28,9 +31,11 @@ export default function InputField({
         type={type}
         id={id}
         placeholder={placeholder}
-        className="w-full border border-border p-3 rounded-sm focus:outline-none focus:ring-2 focus:ring-primary"
+        className="w-full border border-border bg-white dark:bg-gray-700 text-foreground p-3 rounded-sm focus:outline-none focus:ring-2 focus:ring-primary placeholder:text-gray-400 dark:placeholder:text-gray-500"
       />
-      {error && <span className="text-xs text-red-500">{error}</span>}
+      {error && (
+        <span className="text-xs text-red-500 dark:text-red-400">{error}</span>
+      )}
     </div>
   );
 }

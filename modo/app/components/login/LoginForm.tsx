@@ -32,7 +32,7 @@ export default function LoginForm({
   return (
     <form
       onSubmit={onSubmit}
-      className="bg-white p-8 sm:p-10 w-full max-w-100 flex flex-col items-center gap-4 rounded-lg shadow-md"
+      className="bg-white dark:bg-gray-800 p-8 sm:p-10 w-full max-w-100 flex flex-col items-center gap-4 rounded-lg shadow-md"
     >
       <Link href={"/"}>
         <Image
@@ -40,7 +40,7 @@ export default function LoginForm({
           alt="logo"
           width={80}
           height={33}
-          className="mb-6"
+          className="mb-6 dark:invert"
         />
       </Link>
 
@@ -49,7 +49,7 @@ export default function LoginForm({
         placeholder="이메일"
         value={email}
         onChange={(e) => onEmailChange(e.target.value)}
-        className="w-full border border-border p-3 rounded-sm focus:outline-none focus:ring-2 focus:ring-primary"
+        className="w-full border border-border bg-white dark:bg-gray-700 text-foreground p-3 rounded-sm focus:outline-none focus:ring-2 focus:ring-primary placeholder:text-gray-400 dark:placeholder:text-gray-500"
       />
 
       <input
@@ -57,7 +57,7 @@ export default function LoginForm({
         placeholder="비밀번호"
         value={password}
         onChange={(e) => onPasswordChange(e.target.value)}
-        className="w-full border border-border p-3 rounded-sm focus:outline-none focus:ring-2 focus:ring-primary"
+        className="w-full border border-border bg-white dark:bg-gray-700 text-foreground p-3 rounded-sm focus:outline-none focus:ring-2 focus:ring-primary placeholder:text-gray-400 dark:placeholder:text-gray-500"
       />
 
       <div className="flex gap-2 items-center self-start mt-1 mb-4">
@@ -66,10 +66,14 @@ export default function LoginForm({
           checked={saveId}
           onChange={(e) => onSaveIdChange(e.target.checked)}
         />
-        <span className="text-sm text-gray-600">아이디 저장</span>
+        <span className="text-sm text-gray-600 dark:text-gray-400">
+          아이디 저장
+        </span>
       </div>
 
-      {error && <p className="text-red-500 text-sm">{error}</p>}
+      {error && (
+        <p className="text-red-500 dark:text-red-400 text-sm">{error}</p>
+      )}
 
       <Button
         type="submit"
@@ -79,7 +83,7 @@ export default function LoginForm({
         {loading ? "로그인 중..." : "로그인"}
       </Button>
 
-      <p className="text-[#767676] text-sm flex gap-2">
+      <p className="text-[#767676] dark:text-gray-400 text-sm flex gap-2">
         <Link href="/join" className="hover:underline">
           회원가입
         </Link>

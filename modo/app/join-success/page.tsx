@@ -3,18 +3,18 @@ import Button from "@/app/components/common/Button";
 
 export default function JoinSuccess() {
   return (
-    <div className="bg-[#f9f9f9] min-h-screen flex justify-center items-center px-4">
+    <div className="bg-[#f9f9f9] dark:bg-gray-900 min-h-screen flex justify-center items-center px-4">
       <div className="flex flex-col items-center gap-14">
-        <img src="/icons/success.svg" alt="" className="w-6 h-6" />
+        <img src="/icons/success.svg" alt="" className="w-6 h-6 dark:invert" />
         <div className="text-center">
-          <p className="font-semibold text-2xl sm:text-4xl mb-2">
+          <p className="font-semibold text-2xl sm:text-4xl mb-2 text-foreground">
             Welcome to MODO Living!
           </p>
-          <p className="text-base sm:text-lg text-secondary">
+          <p className="text-base sm:text-lg text-secondary dark:text-gray-400">
             회원가입이 완료되었습니다.
           </p>
         </div>
-        <p className="text-base sm:text-lg">
+        <p className="text-base sm:text-lg text-foreground">
           지금 바로 감각적인 리빙 아이템을 만나보세요.
         </p>
         <Link href={"/login"}>

@@ -17,15 +17,17 @@ export default function LoginModal() {
 
   return (
     <div
-      className="fixed inset-0 flex items-center justify-center bg-black/50 z-50"
+      className="fixed inset-0 flex items-center justify-center bg-black/50 dark:bg-black/70 z-50"
       onClick={closeLoginModal}
     >
       <div
-        className="bg-white p-8 rounded-lg w-90 flex flex-col items-center gap-2"
+        className="bg-white dark:bg-gray-800 p-8 rounded-lg w-90 flex flex-col items-center gap-2"
         onClick={(e) => e.stopPropagation()}
       >
-        <h3 className="text-lg font-medium">로그인이 필요한 서비스입니다.</h3>
-        <p className="mb-4">로그인 하시겠습니까?</p>
+        <h3 className="text-lg font-medium text-foreground">
+          로그인이 필요한 서비스입니다.
+        </h3>
+        <p className="mb-4 text-foreground">로그인 하시겠습니까?</p>
         <div className="flex gap-3 justify-center">
           <Button onClick={closeLoginModal} variant="outline">
             취소
