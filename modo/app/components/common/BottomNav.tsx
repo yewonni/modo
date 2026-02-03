@@ -61,7 +61,7 @@ export default function BottomNav() {
   const TABS: Tab[] = accessToken ? LOGGED_IN_TABS : LOGGED_OUT_TABS;
 
   return (
-    <nav className="fixed bottom-0 left-0 z-50 w-full border-t bg-sub-bg md:hidden">
+    <nav className="fixed bottom-0 left-0 z-50 w-full border-t border-border bg-sub-bg md:hidden">
       <ul className="flex h-16 items-center justify-around">
         {TABS.map((tab) => {
           const isActive =
@@ -79,8 +79,17 @@ export default function BottomNav() {
                   alt={tab.label}
                   width={22}
                   height={22}
+                  className={
+                    isActive ? "dark:invert" : "dark:invert dark:opacity-60"
+                  }
                 />
-                <span className={isActive ? "text-black" : "text-gray-600"}>
+                <span
+                  className={
+                    isActive
+                      ? "text-black dark:text-white"
+                      : "text-gray-600 dark:text-gray-400"
+                  }
+                >
                   {tab.label}
                 </span>
               </Link>
