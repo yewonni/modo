@@ -95,10 +95,13 @@ https://modo-phi.vercel.app/
 - 모바일·데스크탑 환경 대응 반응형 레이아웃
 - CLS 최소화를 고려한 고정 비율 이미지 레이아웃
 - 홈 화면 상단 및 하단 배너를 통한 CTA 유도 및 사용자 동선 설계
+- 다크모드 스타일 적용
 
 <img width="374" height="981" alt="Image" src="https://github.com/user-attachments/assets/ba9d5a5e-cc13-4de5-8936-53d95e9bb558" />
 
 <img width="377" height="987" alt="Image" src="https://github.com/user-attachments/assets/65411760-9e1e-4342-8811-08394a4e838e" />
+
+
 
 ---
 
