@@ -9,9 +9,7 @@
   --border: #e4e4e4;
   --stroke: #b4b4b4;
   --sub-bg: #f5f5f5;
-}
 
-@theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-primary: var(--primary);
@@ -29,12 +27,21 @@
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
-
     --primary: #ededed;
+    --point: #8906d5;
     --secondary: #b4b4b4;
     --border: #2a2a2a;
     --stroke: #404040;
     --sub-bg: #141414;
+
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+    --color-primary: var(--primary);
+    --color-point: var(--point);
+    --color-secondary: var(--secondary);
+    --color-border: var(--border);
+    --color-stroke: var(--stroke);
+    --color-sub-bg: var(--sub-bg);
   }
 }
 
