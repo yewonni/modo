@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { apiRequest } from "@/app/lib/apiClient";
+import { useAuthStore } from "@/app/store/authStore";
 import { showToast } from "@/app/components/common/UniqueToast";
 import LoadingSpinner from "@/app/components/common/LoadingSpinner";
 
@@ -13,21 +15,36 @@ interface Review {
 }
 
 export default function MyReviewsPage() {
+  const router = useRouter();
+  const isInitialized = useAuthStore((s) => s.isInitialized);
+
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchReviews = async () => {
-    setLoading(true);
-    try {
-      const data = await apiRequest<Review[]>("/api/reviews");
-      setReviews(Array.isArray(data) ? data : []);
-    } catch (err: any) {
-      showToast(err.message || "리뷰를 불러오는데 실패했습니다", "fetch-error");
-      setReviews([]);
-    } finally {
-      setLoading(false);
-    }
-  };
+  useEffect(() => {
+    if (!isInitialized) return;
+
+    const fetchReviews = async () => {
+      try {
+        const data = await apiRequest<Review[]>("/api/reviews");
+        setReviews(Array.isArray(data) ? data : []);
+      } catch (err: any) {
+        if (err?.status === 401) {
+          router.push("/login");
+          return;
+        }
+        showToast(
+          err?.message || "리뷰를 불러오는데 실패했습니다",
+          "fetch-error",
+        );
+        setReviews([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchReviews();
+  }, [isInitialized, router]);
 
   const handleDelete = async (id: number) => {
     if (!confirm("정말 삭제하시겠습니까?")) return;
@@ -35,18 +52,17 @@ export default function MyReviewsPage() {
     try {
       await apiRequest(`/api/reviews?id=${id}`, { method: "DELETE" });
       setReviews((prev) => prev.filter((r) => r.id !== id));
-
       showToast("리뷰가 삭제되었습니다", `delete-success-${id}`);
     } catch (err: any) {
-      showToast(err.message || "리뷰 삭제 실패", `delete-error-${id}`);
+      if (err?.status === 401) {
+        router.push("/login");
+        return;
+      }
+      showToast(err?.message || "리뷰 삭제 실패", `delete-error-${id}`);
     }
   };
 
-  useEffect(() => {
-    fetchReviews();
-  }, []);
-
-  if (loading) {
+  if (!isInitialized || loading) {
     return (
       <section className="flex flex-col gap-6 sm:gap-8">
         <p className="text-xl sm:text-2xl">나의 리뷰</p>

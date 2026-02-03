@@ -2,8 +2,9 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { apiRequest } from "@/app/lib/apiClient";
 import { useRouter } from "next/navigation";
+import { apiRequest } from "@/app/lib/apiClient";
+import { useAuthStore } from "@/app/store/authStore";
 import Button from "@/app/components/common/Button";
 import LoadingSpinner from "@/app/components/common/LoadingSpinner";
 
@@ -33,15 +34,24 @@ interface Order {
 
 export default function MyOrdersPage() {
   const router = useRouter();
+
+  const isInitialized = useAuthStore((s) => s.isInitialized);
+
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!isInitialized) return;
+
     const fetchOrders = async () => {
       try {
         const data = await apiRequest<Order[]>("/api/orders");
         setOrders(Array.isArray(data) ? data : []);
-      } catch (error) {
+      } catch (error: any) {
+        if (error?.status === 401) {
+          router.push("/login");
+          return;
+        }
         setOrders([]);
       } finally {
         setLoading(false);
@@ -49,7 +59,7 @@ export default function MyOrdersPage() {
     };
 
     fetchOrders();
-  }, []);
+  }, [isInitialized, router]);
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -62,7 +72,7 @@ export default function MyOrdersPage() {
     return `${year}.${month}.${day} (${weekday})`;
   };
 
-  if (loading) {
+  if (!isInitialized || loading) {
     return (
       <section className="flex flex-col gap-6 sm:gap-8">
         <p className="text-xl sm:text-2xl">최근 주문</p>
@@ -90,7 +100,6 @@ export default function MyOrdersPage() {
 
       {orders.map((order) => (
         <div key={order.id} className="flex flex-col gap-4">
-          {/* 주문 헤더 */}
           <div className="flex justify-between items-center px-2">
             <p className="text-xs sm:text-sm text-gray-600">
               주문번호: {order.id} | {order.paymentMethod}
@@ -100,7 +109,6 @@ export default function MyOrdersPage() {
             </p>
           </div>
 
-          {/* 주문 상품들 */}
           <div className="bg-sub-bg rounded-xl p-4 sm:p-6 flex flex-col gap-4">
             {order.items.map((item) => (
               <div key={item.id} className="flex gap-4 sm:gap-6">
@@ -137,7 +145,6 @@ export default function MyOrdersPage() {
               </div>
             ))}
 
-            {/* 주문 총액 */}
             <div className="pt-4 border-t flex justify-between items-center">
               <p className="text-sm text-gray-600">총 주문 금액</p>
               <p className="text-lg font-bold">
@@ -145,7 +152,6 @@ export default function MyOrdersPage() {
               </p>
             </div>
 
-            {/* 배송 정보 */}
             <div className="pt-4 border-t text-sm text-gray-600 space-y-1">
               <p>받는 사람: {order.receiver}</p>
               <p>연락처: {order.phone}</p>
