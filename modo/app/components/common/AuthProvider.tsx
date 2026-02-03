@@ -16,7 +16,6 @@ export default function AuthProvider({
       try {
         const newAccessToken = await refreshAccessToken();
         setAccessToken(newAccessToken);
-        console.log("자동 로그인 성공");
       } catch (error) {
         console.log("자동 로그인 실패 (로그인 필요)");
       } finally {
