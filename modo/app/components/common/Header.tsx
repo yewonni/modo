@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/app/store/authStore";
 import { useSearchHistoryStore } from "@/app/store/searchHistoryStore";
+import { useConfirmStore } from "@/app/store/confirmStore";
 import { logout } from "@/app/lib/api";
 
 const TOP_HEIGHT = 125;
@@ -35,6 +36,8 @@ export default function Header({ categories }: HeaderProps) {
   const removeKeyword = useSearchHistoryStore((state) => state.removeKeyword);
   const clearHistory = useSearchHistoryStore((state) => state.clearHistory);
 
+  const openConfirm = useConfirmStore((state) => state.openConfirm);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const trimmed = keyword.trim();
@@ -52,16 +55,22 @@ export default function Header({ categories }: HeaderProps) {
     return () => window.removeEventListener("click", closeMenu);
   }, []);
 
-  const handleLogout = async () => {
+  const executeLogout = async () => {
     try {
       await logout();
+    } finally {
       clearAccessToken();
       setOpenUserMenu(false);
       router.push("/login");
-    } catch (error) {
-      clearAccessToken();
-      router.push("/login");
     }
+  };
+
+  const handleLogoutClick = () => {
+    openConfirm({
+      title: "로그아웃",
+      message: "정말 로그아웃 하시겠습니까?",
+      onConfirm: executeLogout,
+    });
   };
 
   return (
@@ -159,7 +168,7 @@ export default function Header({ categories }: HeaderProps) {
                         마이페이지
                       </Link>
                       <button
-                        onClick={handleLogout}
+                        onClick={handleLogoutClick}
                         className="w-full p-4 text-sm hover:bg-gray-100 text-center"
                       >
                         로그아웃

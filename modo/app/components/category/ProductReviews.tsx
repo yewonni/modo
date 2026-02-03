@@ -5,6 +5,7 @@ import Button, { StarButton } from "../common/Button";
 import { apiRequest } from "@/app/lib/apiClient";
 import { showToast } from "../common/UniqueToast";
 import LoadingSpinner from "../common/LoadingSpinner";
+import { useConfirmStore } from "@/app/store/confirmStore";
 
 interface Review {
   id: number;
@@ -28,6 +29,8 @@ export default function ProductReviews({ productId, hasOrdered }: Props) {
   const [reviewRating, setReviewRating] = useState(5);
   const [loading, setLoading] = useState(true);
 
+  const openConfirm = useConfirmStore((state) => state.openConfirm);
+
   const fetchReviews = useCallback(async () => {
     setLoading(true);
     try {
@@ -35,7 +38,7 @@ export default function ProductReviews({ productId, hasOrdered }: Props) {
         `/api/products/${productId}/reviews`,
       );
       setReviews(Array.isArray(data) ? data : []);
-    } catch (err) {
+    } catch {
       setReviews([]);
     } finally {
       setLoading(false);
@@ -59,6 +62,7 @@ export default function ProductReviews({ productId, hasOrdered }: Props) {
       createdAt: new Date().toISOString(),
       user: { id: 0, name: "나" },
     };
+
     setReviews((prev) => [newReview, ...prev]);
     setReviewContent("");
     setReviewRating(5);
@@ -84,27 +88,31 @@ export default function ProductReviews({ productId, hasOrdered }: Props) {
   }, [reviewContent, reviewRating, productId, fetchReviews]);
 
   const handleDeleteReview = useCallback(
-    async (reviewId: number) => {
-      if (!confirm("정말 삭제하시겠습니까?")) return;
+    (reviewId: number) => {
+      openConfirm({
+        title: "리뷰 삭제",
+        message: "정말 삭제하시겠습니까?",
+        onConfirm: async () => {
+          const prevReviews = [...reviews];
+          setReviews((prev) => prev.filter((r) => r.id !== reviewId));
 
-      const prevReviews = [...reviews];
-      setReviews((prev) => prev.filter((r) => r.id !== reviewId));
+          try {
+            await apiRequest(`/api/products/${productId}/reviews/${reviewId}`, {
+              method: "DELETE",
+            });
 
-      try {
-        await apiRequest(`/api/products/${productId}/reviews/${reviewId}`, {
-          method: "DELETE",
-        });
-
-        showToast("리뷰가 삭제되었습니다", `review-delete-${reviewId}`);
-      } catch (err: any) {
-        showToast(
-          err.message || "리뷰 삭제 실패",
-          `review-delete-error-${reviewId}`,
-        );
-        setReviews(prevReviews);
-      }
+            showToast("리뷰가 삭제되었습니다", `review-delete-${reviewId}`);
+          } catch (err: any) {
+            showToast(
+              err.message || "리뷰 삭제 실패",
+              `review-delete-error-${reviewId}`,
+            );
+            setReviews(prevReviews);
+          }
+        },
+      });
     },
-    [productId, reviews],
+    [openConfirm, productId, reviews],
   );
 
   const renderStars = (rating: number, editable = false) =>

@@ -7,6 +7,7 @@ import HeaderWrapper from "./components/common/HeaderWrapper";
 import AuthProvider from "./components/common/AuthProvider";
 import LikeFetcher from "./components/common/LikeFetcher";
 import { getHeaderCategories } from "./lib/getHeaderCategories";
+import ConfirmModal from "./components/common/ConfirmModal";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -27,7 +28,11 @@ export default async function RootLayout({
           <AuthInitializer />
           <HeaderWrapper categories={categories} />
           <LikeFetcher />
+
           {children}
+
+          <ConfirmModal />
+          <Toaster />
         </AuthProvider>
 
         <Toaster />

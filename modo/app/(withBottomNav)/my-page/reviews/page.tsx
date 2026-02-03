@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { apiRequest } from "@/app/lib/apiClient";
 import { useAuthStore } from "@/app/store/authStore";
+import { useConfirmStore } from "@/app/store/confirmStore";
 import { showToast } from "@/app/components/common/UniqueToast";
 import LoadingSpinner from "@/app/components/common/LoadingSpinner";
 
@@ -17,6 +18,7 @@ interface Review {
 export default function MyReviewsPage() {
   const router = useRouter();
   const isInitialized = useAuthStore((s) => s.isInitialized);
+  const openConfirm = useConfirmStore((s) => s.openConfirm);
 
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
@@ -46,20 +48,26 @@ export default function MyReviewsPage() {
     fetchReviews();
   }, [isInitialized, router]);
 
-  const handleDelete = async (id: number) => {
-    if (!confirm("정말 삭제하시겠습니까?")) return;
-
-    try {
-      await apiRequest(`/api/reviews?id=${id}`, { method: "DELETE" });
-      setReviews((prev) => prev.filter((r) => r.id !== id));
-      showToast("리뷰가 삭제되었습니다", `delete-success-${id}`);
-    } catch (err: any) {
-      if (err?.status === 401) {
-        router.push("/login");
-        return;
-      }
-      showToast(err?.message || "리뷰 삭제 실패", `delete-error-${id}`);
-    }
+  const handleDelete = (id: number) => {
+    openConfirm({
+      title: "리뷰 삭제",
+      message: "정말 삭제하시겠습니까?",
+      onConfirm: async () => {
+        try {
+          await apiRequest(`/api/reviews?id=${id}`, {
+            method: "DELETE",
+          });
+          setReviews((prev) => prev.filter((r) => r.id !== id));
+          showToast("리뷰가 삭제되었습니다", `delete-success-${id}`);
+        } catch (err: any) {
+          if (err?.status === 401) {
+            router.push("/login");
+            return;
+          }
+          showToast(err?.message || "리뷰 삭제 실패", `delete-error-${id}`);
+        }
+      },
+    });
   };
 
   if (!isInitialized || loading) {
